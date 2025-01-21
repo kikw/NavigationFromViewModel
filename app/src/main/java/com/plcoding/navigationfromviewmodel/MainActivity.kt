@@ -12,20 +12,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.plcoding.navigationfromviewmodel.di.requireNavigatorEntryPoint
 import com.plcoding.navigationfromviewmodel.ui.theme.NavigationFromViewModelTheme
-import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.koinInject
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.UUID
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
             NavigationFromViewModelTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val navController = rememberNavController()
-                    val navigator = koinInject<Navigator>()
+                    val navigator = requireNavigatorEntryPoint().navigator
 
                     ObserveAsEvents(flow = navigator.navigationActions) { action ->
                         when(action) {
@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
                             startDestination = Destination.LoginScreen
                         ) {
                             composable<Destination.LoginScreen> {
-                                val viewModel = koinViewModel<LoginViewModel>()
+                                val viewModel = hiltViewModel<LoginViewModel>()
                                 Box(
                                     modifier = Modifier
                                         .fillMaxSize(),
@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
                             startDestination = Destination.HomeScreen
                         ) {
                             composable<Destination.HomeScreen> {
-                                val viewModel = koinViewModel<HomeViewModel>()
+                                val viewModel = hiltViewModel<HomeViewModel>()
                                 Box(
                                     modifier = Modifier
                                         .fillMaxSize(),
@@ -86,7 +86,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                             composable<Destination.DetailScreen> {
-                                val viewModel = koinViewModel<DetailViewModel>()
+                                val viewModel = hiltViewModel<DetailViewModel>()
                                 val args = it.toRoute<Destination.DetailScreen>()
                                 Column(
                                     modifier = Modifier
